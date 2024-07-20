@@ -1,0 +1,47 @@
+# scripts/blockchain_interaction.py
+
+from web3 import Web3
+
+def connect_to_blockchain(provider_url):
+    """
+    Connect to the Ethereum blockchain.
+
+    :param provider_url: URL of the Ethereum provider
+    :return: Web3 instance
+    """
+    web3 = Web3(Web3.HTTPProvider(provider_url))
+    return web3
+
+def query_block_data(web3, block_number):
+    """
+    Query data for a specific block number.
+
+    :param web3: Web3 instance
+    :param block_number: Block number to query
+    :return: Block data
+    """
+    block = web3.eth.getBlock(block_number, full_transactions=True)
+    return block
+
+def interact_with_contract(web3, contract_address, abi, method_name, *args):
+    """
+    Interact with a smart contract method.
+
+    :param web3: Web3 instance
+    :param contract_address: Address of the smart contract
+    :param abi: ABI of the smart contract
+    :param method_name: Method name to call
+    :param args: Arguments for the method
+    :return: Result of the method call
+    """
+    contract = web3.eth.contract(address=contract_address, abi=abi)
+    method = getattr(contract.functions, method_name)
+    result = method(*args).call()
+    return result
+
+# Example usage:
+# web3 = connect_to_blockchain('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID')
+# block_data = query_block_data(web3, 12345678)
+# print(block_data)
+# result = interact_with_contract(web3, '0x123...', contract_abi, 'methodName', arg1, arg2)
+# print(result)
